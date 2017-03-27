@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 #-------------------------
-#   版本：
-#   日期：
+#   版本：1.0
+#   日期：2017年03月27日10:47:52
 #   作者：kk
 #-------------------------
 
 from pymongo import MongoClient
-import sys
 
 class mongoConnector(object):
     client = MongoClient("127.0.0.1", 27017)
@@ -20,7 +19,6 @@ class mongoConnector(object):
 
         collection = self.db.Information
 
-        print collection.count()
         resultCollection = collection.find({"Gender": {"$in": ("男", "女")}})
 
         # 练个数组
@@ -41,3 +39,15 @@ class mongoConnector(object):
         collection = self.db.Tweets
         tweets_list = collection.find({"ID":userID})
         return tweets_list
+
+    def getDB(self):
+        return self.db
+
+    def getClient(self):
+        return self.client
+
+    def getMale(self):
+        return self.db.male_id.find()
+
+    def getFemale(self):
+        return self.db.female_id.find()

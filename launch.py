@@ -1,30 +1,23 @@
 # -*- coding: utf-8 -*-
 #-------------------------
-#   版本：
-#   日期：
+#   版本：1.0
+#   日期：2017年03月27日10:48:23
 #   作者：kk
 #-------------------------
 
-from mongoConnector import *
-from jiebaTool import  *
-import jieba.analyse
+from mongodb.mongoConnector import *
+from mongodb.pre_handle_data import *
 #连接mongoDB
-mongo = mongoConnector()
+# mongo = mongoConnector()
 
-male_list,female_list = mongo.getMaleAndFemaleUserInfo()
-temp_tweets_list = mongo.getUserTweetsByID(male_list[0]["_id"])
+handler = pre_handle_data()
+handler.separate_sex()
 
-temp_content = ""
-for temp_bean in temp_tweets_list:
-    temp_content += temp_bean["Content"]
-
-# seg_list = jiebaTool().cutContent(temp_content)
-list = jieba.analyse.extract_tags(temp_content,50)
-for bean in list:
-    print bean
-
-
-
-print "kktestttts"
-
+# #构建所有男性的content
+# male_temp_content = ""
+# for person in male_list:
+#     print person["_id"]
+#     for temp_bean in mongo.getUserTweetsByID(person["_id"]):
+#         print "adding :"+temp_bean["Content"]
+#         male_temp_content += temp_bean["Content"]
 
