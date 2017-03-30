@@ -4,20 +4,14 @@
 #   日期：2017年03月27日10:48:23
 #   作者：kk
 #-------------------------
-
-from mongodb.mongoConnector import *
+import codecs
 from mongodb.pre_handle_data import *
-#连接mongoDB
-# mongo = mongoConnector()
+# from mongodb.data_center import *
 
 handler = pre_handle_data()
-handler.separate_sex()
+handler.get_male_content()
+#已完成 handler.separate_sex()
+# datacenter = data_center()
 
-# #构建所有男性的content
-# male_temp_content = ""
-# for person in male_list:
-#     print person["_id"]
-#     for temp_bean in mongo.getUserTweetsByID(person["_id"]):
-#         print "adding :"+temp_bean["Content"]
-#         male_temp_content += temp_bean["Content"]
+
 

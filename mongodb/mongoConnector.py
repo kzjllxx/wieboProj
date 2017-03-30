@@ -40,6 +40,7 @@ class mongoConnector(object):
         tweets_list = collection.find({"ID":userID})
         return tweets_list
 
+
     def getDB(self):
         return self.db
 
@@ -47,7 +48,13 @@ class mongoConnector(object):
         return self.client
 
     def getMale(self):
-        return self.db.male_id.find()
+        collection = self.db.male_id
+        list = collection.find()
+        return list
 
     def getFemale(self):
-        return self.db.female_id.find()
+        collection = self.db.female_id
+        return collection.find()
+
+    def get_male_with_slice(self,start,end):
+        return self.db.male_id.find()
