@@ -18,8 +18,11 @@ class data_center(object):
             result_list.append(male)
         return result_list
 
-    def get_females_id(self):
-        return self.mongo.getFemale()
+    def get_females(self):
+        result_list = []
+        for female in self.mongo.getFemale():
+            result_list.append(female)
+        return result_list
 
     def get_tweets_by_id(self,temp_id):
         return self.mongo.getUserTweetsByID(temp_id)

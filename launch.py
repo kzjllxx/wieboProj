@@ -10,6 +10,7 @@ from mongodb.pre_handle_data import *
 
 handler = pre_handle_data()
 handler.get_male_content()
+handler.get_female_content()
 #已完成 handler.separate_sex()
 # datacenter = data_center()
 
