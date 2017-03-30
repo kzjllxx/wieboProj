@@ -9,7 +9,7 @@ from pymongo import MongoClient
 
 class mongoConnector(object):
     client = MongoClient("127.0.0.1", 27017)
-    db = client["sina"]
+    db = client["new_sina"]
     def __init__(self):
         pass
 
@@ -48,12 +48,12 @@ class mongoConnector(object):
         return self.client
 
     def getMale(self):
-        collection = self.db.male_id
+        collection = self.db.male
         list = collection.find()
         return list
 
     def getFemale(self):
-        collection = self.db.female_id
+        collection = self.db.female
         return collection.find()
 
     def get_male_with_slice(self,start,end):

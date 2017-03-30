@@ -5,7 +5,7 @@
 #   作者：kk
 #-------------------------
 
-import jieba
+from jieba import *
 
 class jiebaTool(object):
     def __init__(self):
@@ -16,4 +16,7 @@ class jiebaTool(object):
 
     #关键词提取，top-tags
     def analysisWithExtractTags(self,content,tags):
-        return jieba.analyse.extract_tags(content,100)
+        return jieba.analyse.extract_tags(content,tags)
+
+    def jieba_posseg(self,content):
+        pass

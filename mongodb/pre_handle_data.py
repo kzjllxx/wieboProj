@@ -8,6 +8,8 @@ from mongoConnector import *
 from data_center import *
 import codecs
 import threading
+from jieba import *
+import jieba.posseg as pseg
 
 class pre_handle_data(object):
     mongo = mongoConnector()
@@ -20,20 +22,47 @@ class pre_handle_data(object):
         # 获得男女的ID列表
         male_list, female_list = self.mongo.getMaleAndFemaleUserInfo()
 
-        male_collection = self.mongo.getDB()["male_id"]
-        female_collection = self.mongo.getDB()["female_id"]
+        male_collection = self.mongo.getDB()["male"]
+        female_collection = self.mongo.getDB()["female"]
         try:
             for male in male_list:
                 print "male: "+male["_id"]
-                male_collection.insert({"ID":male["_id"]})
+                male_collection.insert(male)
             for female in female_list:
                 print "female: "+female["_id"]
-                female_collection.insert({"ID":female["_id"]})
+                female_collection.insert(female)
         except:
             print "error!!!"
 
     def separeteContentBySex(self):
         male_list = self.mongo.getMale
+
+    def cut_male_name(self):
+        list = self.mongo.getMale()
+        result_list = self.cut_person_name(list,)
+        for words in result_list:
+            with codecs.open("C:\Users\chenyx\Desktop\weiboProData\male_name.txt", "a", "utf-8") as f:
+                content = words.word + " " + words.flag + '\r\n'
+                f.writelines(content)
+
+    def cut_female_name(self):
+        print "cutting female_name"
+        list = self.mongo.getFemale()
+        result_list = self.cut_person_name(list,)
+        for words in result_list:
+            with codecs.open("C:\Users\chenyx\Desktop\weiboProData\_female_name.txt", "a", "utf-8") as f:
+                content = words.word + " " + words.flag + '\r\n'
+                f.writelines(content)
+
+    def cut_person_name(self,list):
+        print "cutting male_name"
+        name_content = ""
+        for person in list:
+            name_content += person["NickName"]
+            name_content += " \n"
+        return pseg.cut(name_content)
+
+
 
     def get_female_content(self):
         print "正在处理女性信息"
@@ -74,7 +103,7 @@ class pre_handle_data(object):
         #当前的处理总数
         count = len(list)
         #数据数组
-        data_list = []
+        # data_list = []
         index = 0
         #获取collection
         collection = self.mongo.getDB()["tweets_by_id"]
@@ -85,22 +114,26 @@ class pre_handle_data(object):
 
                 temp_content = ""
                 temp_count = 0
-                total = self.dc.get_tweets_by_id(person["ID"]).count()
+                total = self.dc.get_tweets_by_id(person["_id"]).count()
                 #少于10条不要
                 if total < 10:
-                    self.mongo.db.male_id.remove({"ID": person["ID"]})
-                    print "less than 10 -- skip!"
+                    if sex_tag == 1:
+                        self.mongo.db.male.remove({"_id": person["_id"]})
+                        print "male---less than 10 -- skip!"
+                    else:
+                        self.mongo.db.female.remove({"_id": person["_id"]})
+                        print "female--less than 10 -- skip!"
                 else:
-                    for tweet_bean in self.dc.get_tweets_by_id(person["ID"]):
+                    for tweet_bean in self.dc.get_tweets_by_id(person["_id"]):
                         temp_count += 1
                         print "current: " + tweet_bean["Content"]
                         temp_content += tweet_bean["Content"]
                         temp_content += "\n"
                     print "ready to append"
                     # 写入数据库
-                    # collection.insert({"content": temp_content}, {"sex": sex_tag})
-                    data_list.append({"content": temp_content,"sex": sex_tag})
-                    print "%d -------  tatal:  %d"%(sequence,len(data_list))
+                    collection.insert({"content": temp_content}, {"sex": sex_tag})
+                    # data_list.append({"content": temp_content,"sex": sex_tag})
+                    # print "%d -------  tatal:  %d"%(sequence,len(data_list))
                     content += temp_content
 
                     # # 写入文件
@@ -111,13 +144,16 @@ class pre_handle_data(object):
 
 
             except:
-                print "there are error!:  "+ person["ID"]
+                print "there are error!:  "+ person["_id"]
 
-        collection.insert(data_list)
+        # collection.insert(data_list)
 
-        with codecs.open("/Users/Vincent/Desktop/_KKTest/Python/pro_data/male.txt", "w", "utf-8") as f:
-            f.writelines(content)
-
+        if sex_tag == 1:
+            with codecs.open("C:\Users\chenyx\Desktop\weiboProData\male.txt", "w", "utf-8") as f:
+                f.writelines(content)
+        else:
+            with codecs.open("C:\Users\chenyx\Desktop\weiboProData\_female.txt", "w", "utf-8") as f:
+                f.writelines(content)
 
 
 
