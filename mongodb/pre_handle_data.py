@@ -35,12 +35,15 @@ class pre_handle_data(object):
             print "error!!!"
 
     def separeteContentBySex(self):
-        male_list = self.mongo.getMale
+        male_list = self.mongo.getMale()
+
 
     def cut_male_name(self):
+        print "cutting male_name"
         list = self.mongo.getMale()
-        result_list = self.cut_person_name(list,)
+        result_list = self.cut_person_name(list)
         for words in result_list:
+            print "words 111"
             with codecs.open("C:\Users\chenyx\Desktop\weiboProData\male_name.txt", "a", "utf-8") as f:
                 content = words.word + " " + words.flag + '\r\n'
                 f.writelines(content)
@@ -48,18 +51,21 @@ class pre_handle_data(object):
     def cut_female_name(self):
         print "cutting female_name"
         list = self.mongo.getFemale()
-        result_list = self.cut_person_name(list,)
+        result_list = self.cut_person_name(list)
         for words in result_list:
             with codecs.open("C:\Users\chenyx\Desktop\weiboProData\_female_name.txt", "a", "utf-8") as f:
                 content = words.word + " " + words.flag + '\r\n'
                 f.writelines(content)
 
     def cut_person_name(self,list):
-        print "cutting male_name"
         name_content = ""
-        for person in list:
-            name_content += person["NickName"]
-            name_content += " \n"
+        try:
+            for person in list:
+                print person
+                name_content += person["NickName"]
+                name_content += " \r\n"
+        except:
+            print "no nickname"
         return pseg.cut(name_content)
 
 
@@ -126,12 +132,10 @@ class pre_handle_data(object):
                 else:
                     for tweet_bean in self.dc.get_tweets_by_id(person["_id"]):
                         temp_count += 1
-                        print "current: " + tweet_bean["Content"]
                         temp_content += tweet_bean["Content"]
                         temp_content += "\n"
-                    print "ready to append"
                     # 写入数据库
-                    collection.insert({"content": temp_content}, {"sex": sex_tag})
+                    collection.insert({"content": temp_content,"sex": sex_tag,"ID":person["_id"]})
                     # data_list.append({"content": temp_content,"sex": sex_tag})
                     # print "%d -------  tatal:  %d"%(sequence,len(data_list))
                     content += temp_content
